@@ -1,1 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Твой старый код ниже можно оставить или удалить, 
+Tailwind сам сделает всё красиво через классы в App.tsx */
