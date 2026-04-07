@@ -1,0 +1,44 @@
+import React, { useState } from 'react';
+
+function App() {
+  return (
+    <div className="min-h-screen bg-black text-white p-8 font-montserrat">
+      {/* Заголовок */}
+      <h1 className="text-4xl font-cinzel text-center mb-12 tracking-widest">
+        CAROUSEL <span className="text-gold-500">STUDIO</span>
+      </h1>
+
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* ЛЕВАЯ ПАНЕЛЬ НАСТРОЕК */}
+        <div className="lg:col-span-1 space-y-8 bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800">
+          
+          {/* 1. ФОН-РЕФЕРЕНС */}
+          <section>
+            <h2 className="text-gold-500 font-bold mb-4">1. ФОН-РЕФЕРЕНС</h2>
+            <div className="border-2 border-dashed border-zinc-700 rounded-xl p-8 text-center hover:border-gold-500 transition-colors cursor-pointer">
+              <span className="text-sm text-zinc-400">+ Загрузить фон (JPEG/PNG)</span>
+            </div>
+          </section>
+
+          {/* 2. ОБЛОЖКА */}
+          <section>
+            <h2 className="text-gold-500 font-bold mb-4">2. ОБЛОЖКА</h2>
+            <p className="text-[10px] text-zinc-500 mb-2 uppercase tracking-tighter">Первая строка - золото, остальные - белые</p>
+            <textarea 
+              className="w-full bg-black border border-zinc-800 rounded-lg p-3 text-sm focus:border-gold-500 outline-none h-24"
+              placeholder="СИЛА ВОЛИ..."
+            />
+            <div className="mt-4">
+              <p className="text-[10px] text-zinc-500 mb-2 uppercase tracking-tighter">Добивка (центр, мелкий белый)</p>
+              <input 
+                type="text" 
+                className="w-full bg-black border border-zinc-800 rounded-lg p-3 text-sm focus:border-gold-500 outline-none"
+                placeholder="Например: Почему так происходит?"
+              />
+            </div>
+          </section>
+
+          {/* 3. СЛАЙДЫ */}
+          <section>
+            <h2 className="text-gold-500 font-bold mb-2

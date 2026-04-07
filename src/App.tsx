@@ -1,143 +1,74 @@
-import React, { useState, useRef } from 'react';
-import './App.css';
+import React, { useState } from 'react';
 
-interface SlideData {
-  title: string;
-  subtitle: string;
-}
-
-const App: React.FC = () => {
-  const [bgImage, setBgImage] = useState<string | null>(null);
-  const [slides, setSlides] = useState<SlideData[]>([
-    { title: 'ЗАГОЛОВОК СЛАЙДА', subtitle: 'Ваш подзаголовок или описание здесь' }
-  ]);
-  
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => setBgImage(event.target?.result as string);
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const updateSlide = (index: number, field: keyof SlideData, value: string) => {
-    const newSlides = [...slides];
-    newSlides[index][field] = value;
-    setSlides(newSlides);
-  };
-
-  const addSlide = () => {
-    setSlides([...slides, { title: 'НОВЫЙ СЛАЙД', subtitle: 'Текст слайда' }]);
-  };
-
-  const removeSlide = (index: number) => {
-    setSlides(slides.filter((_, i) => i !== index));
-  };
-
-  const wrapText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number) => {
-    const words = text.split(' ');
-    const lines = [];
-    let currentLine = words[0];
-
-    for (let i = 1; i < words.length; i++) {
-      const word = words[i];
-      const width = ctx.measureText(currentLine + " " + word).width;
-      if (width < maxWidth) {
-        currentLine += " " + word;
-      } else {
-        lines.push(currentLine);
-        currentLine = word;
-      }
-    }
-    lines.push(currentLine);
-    return lines;
-  };
-
-  const drawSlide = (ctx: CanvasRenderingContext2D, slide: SlideData, img: HTMLImageElement) => {
-    // Рисуем фон
-    ctx.drawImage(img, 0, 0, 1080, 1350);
-
-    // Настройки заголовка (Cinzel)
-    ctx.fillStyle = 'white';
-    ctx.textAlign = 'center';
-    ctx.font = 'bold 80px Cinzel';
-    
-    const titleLines = wrapText(ctx, slide.title.toUpperCase(), 900);
-    titleLines.forEach((line, i) => {
-      ctx.fillText(line, 540, 500 + (i * 100));
-    });
-
-    // Настройки подзаголовка (Montserrat)
-    ctx.font = '400 40px Montserrat';
-    const subStartTop = 550 + (titleLines.length * 100);
-    const subtitleLines = wrapText(ctx, slide.subtitle, 800);
-    
-    subtitleLines.forEach((line, i) => {
-      ctx.fillText(line, 540, subStartTop + (i * 60));
-    });
-  };
-
-  const downloadSlides = async () => {
-    if (!canvasRef.current || !bgImage) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const img = new Image();
-    img.src = bgImage;
-    await new Promise((res) => (img.onload = res));
-
-    for (let i = 0; i < slides.length; i++) {
-      ctx.clearRect(0, 0, 1080, 1350);
-      drawSlide(ctx, slides[i], img);
-      
-      const link = document.createElement('a');
-      link.download = `slide-${i + 1}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      // Небольшая пауза между скачиваниями
-      await new Promise(r => setTimeout(r, 300));
-    }
-  };
-
+function App() {
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>CAROUSEL STUDIO</h1>
-        <div className="controls">
-          <input type="file" accept="image/*" onChange={handleImageUpload} id="bg-upload" />
-          <label htmlFor="bg-upload" className="btn">ЗАГРУЗИТЬ ФОН</label>
-          <button onClick={addSlide} className="btn">ДОБАВИТЬ СЛАЙД</button>
-          <button onClick={downloadSlides} className="btn primary" disabled={!bgImage}>СКАЧАТЬ ВСЕ СЛАЙДЫ</button>
+    <div className="min-h-screen bg-black text-white p-8 font-montserrat">
+      {/* Заголовок */}
+      <h1 className="text-4xl font-cinzel text-center mb-12 tracking-widest">
+        CAROUSEL <span className="text-gold-500">STUDIO</span>
+      </h1>
+
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* ЛЕВАЯ ПАНЕЛЬ НАСТРОЕК */}
+        <div className="lg:col-span-1 space-y-8 bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800">
+          
+          {/* 1. ФОН-РЕФЕРЕНС */}
+          <section>
+            <h2 className="text-gold-500 font-bold mb-4">1. ФОН-РЕФЕРЕНС</h2>
+            <div className="border-2 border-dashed border-zinc-700 rounded-xl p-8 text-center hover:border-gold-500 transition-colors cursor-pointer">
+              <span className="text-sm text-zinc-400">+ Загрузить фон (JPEG/PNG)</span>
+            </div>
+          </section>
+
+          {/* 2. ОБЛОЖКА */}
+          <section>
+            <h2 className="text-gold-500 font-bold mb-4">2. ОБЛОЖКА</h2>
+            <p className="text-[10px] text-zinc-500 mb-2 uppercase tracking-tighter">Первая строка - золото, остальные - белые</p>
+            <textarea 
+              className="w-full bg-black border border-zinc-800 rounded-lg p-3 text-sm focus:border-gold-500 outline-none h-24"
+              placeholder="СИЛА ВОЛИ..."
+            />
+            <div className="mt-4">
+              <p className="text-[10px] text-zinc-500 mb-2 uppercase tracking-tighter">Добивка (центр, мелкий белый)</p>
+              <input 
+                type="text" 
+                className="w-full bg-black border border-zinc-800 rounded-lg p-3 text-sm focus:border-gold-500 outline-none"
+                placeholder="Например: Почему так происходит?"
+              />
+            </div>
+          </section>
+
+          {/* 3. СЛАЙДЫ */}
+          <section>
+            <h2 className="text-gold-500 font-bold mb-2">3. СЛАЙДЫ</h2>
+            <p className="text-xs text-zinc-500 mb-4">СЛАЙД 1</p>
+            <button className="w-full py-3 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-sm transition-all">
+              + Добавить слайд
+            </button>
+          </section>
         </div>
-      </header>
 
-      <main className="slides-grid">
-        {slides.map((slide, index) => (
-          <div key={index} className="slide-card">
-            <h3>Слайд {index + 1}</h3>
-            <textarea 
-              placeholder="Заголовок" 
-              value={slide.title} 
-              onChange={(e) => updateSlide(index, 'title', e.target.value)}
-            />
-            <textarea 
-              placeholder="Подзаголовок" 
-              value={slide.subtitle} 
-              onChange={(e) => updateSlide(index, 'subtitle', e.target.value)}
-            />
-            <button onClick={() => removeSlide(index)} className="btn-delete">Удалить</button>
+        {/* ПРАВАЯ ПАНЕЛЬ ПРЕДПРОСМОТРА */}
+        <div className="lg:col-span-2">
+          <div className="bg-zinc-900/30 border border-zinc-800 rounded-3xl p-8 h-full min-h-[500px] flex flex-col">
+            <h2 className="text-sm uppercase tracking-widest text-zinc-400 mb-8 text-center">Предпросмотр</h2>
+            
+            <div className="flex-grow border border-zinc-800 border-dashed rounded-2xl flex items-center justify-center relative bg-black/40">
+              <span className="text-zinc-600 text-sm">Заполни тексты и нажми генерацию</span>
+            </div>
+
+            <div className="mt-8 flex justify-end gap-4">
+               <button className="px-6 py-2 bg-gold-500 text-black font-bold rounded-lg hover:bg-gold-600 transition-all">
+                 Скачать все слайды
+               </button>
+            </div>
           </div>
-        ))}
-      </main>
+        </div>
 
-      {/* Скрытый холст для генерации */}
-      <canvas ref={canvasRef} width={1080} height={1350} style={{ display: 'none' }} />
+      </div>
     </div>
   );
-};
+}
 
 export default App;
