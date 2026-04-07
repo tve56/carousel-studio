@@ -5,7 +5,18 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        gold: {
+          500: '#D4AF37',
+          600: '#C5A028',
+        }
+      },
+      fontFamily: {
+        cinzel: ['Cinzel', 'serif'],
+        montserrat: ['Montserrat', 'sans-serif'],
+      }
+    },
   },
   plugins: [],
 }
